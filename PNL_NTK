@@ -1,0 +1,957 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.6.4"
+    },
+    "colab": {
+      "name": "Actividad_1_NLTK.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "include_colab_link": true
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/oscarfdezmora/EOI_Master_DSc/blob/main/PNL_NTK\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "iF2N1iCsszw1"
+      },
+      "source": [
+        "![Captura%20de%20pantalla%202021-02-18%20a%20las%2012.20.10.png](attachment:Captura%20de%20pantalla%202021-02-18%20a%20las%2012.20.10.png)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "-wRJd05dszw_"
+      },
+      "source": [
+        "## Bienvenido a la actividad 1"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "sMImZzLNszxA"
+      },
+      "source": [
+        "A continuación, se proporciona un texto de entrada en inglés. Este texto pertenece a la colección de artículos de opinión sobre utensilios de cocina del SFU Review Corpus (https://www.sfu.ca/~mtaboada/SFU_Review_Corpus.html). Dicho corpus consiste en 400 artículos de opinión extraídos de la web Epinions. Los artículos están divididos en 8 categorías, con 25 de ellos etiquetados con polaridad positiva y 25 con polaridad negativa en cada una de las categorías. Se trata de un corpus ampliamente utilizado en el análisis de sentimientos.\n",
+        "\n",
+        "El objetivo de esta práctica es crear el código necesario para responder a la serie de preguntas que se muestran a lo largo de este script, haciendo uso para ello de la librería NLTK. Se deberá responder en las celdas destinadas a la introducción de código. Se proporciona la salida esperada en cada caso."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GD-5KpTbszxB"
+      },
+      "source": [
+        "*****************"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "r9XtohW3szxB"
+      },
+      "source": [
+        "**Los comandos que se incluyen a continuación, se deberán ejecutar en caso de no tener previamente instalado NLTK.**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "U8uomobwszxC",
+        "outputId": "6f258bd5-f9bc-45e4-919c-d584f570e190"
+      },
+      "source": [
+        "!pip install --user -U nltk"
+      ],
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Requirement already up-to-date: nltk in /root/.local/lib/python3.7/site-packages (3.5)\n",
+            "Requirement already satisfied, skipping upgrade: regex in /usr/local/lib/python3.7/dist-packages (from nltk) (2019.12.20)\n",
+            "Requirement already satisfied, skipping upgrade: tqdm in /usr/local/lib/python3.7/dist-packages (from nltk) (4.41.1)\n",
+            "Requirement already satisfied, skipping upgrade: joblib in /usr/local/lib/python3.7/dist-packages (from nltk) (1.0.1)\n",
+            "Requirement already satisfied, skipping upgrade: click in /usr/local/lib/python3.7/dist-packages (from nltk) (7.1.2)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "BdrxSJVMszxD",
+        "outputId": "180eb764-4a99-46c0-e5d4-62820473e441"
+      },
+      "source": [
+        "import nltk\n",
+        "# Al descargar los datos seleccionar \"all\"\n",
+        "nltk.download()"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "NLTK Downloader\n",
+            "---------------------------------------------------------------------------\n",
+            "    d) Download   l) List    u) Update   c) Config   h) Help   q) Quit\n",
+            "---------------------------------------------------------------------------\n",
+            "Downloader> d\n",
+            "\n",
+            "Download which package (l=list; x=cancel)?\n",
+            "  Identifier> all\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "    Downloading collection 'all'\n",
+            "       | \n",
+            "       | Downloading package abc to /root/nltk_data...\n",
+            "       |   Package abc is already up-to-date!\n",
+            "       | Downloading package alpino to /root/nltk_data...\n",
+            "       |   Package alpino is already up-to-date!\n",
+            "       | Downloading package biocreative_ppi to /root/nltk_data...\n",
+            "       |   Package biocreative_ppi is already up-to-date!\n",
+            "       | Downloading package brown to /root/nltk_data...\n",
+            "       |   Package brown is already up-to-date!\n",
+            "       | Downloading package brown_tei to /root/nltk_data...\n",
+            "       |   Package brown_tei is already up-to-date!\n",
+            "       | Downloading package cess_cat to /root/nltk_data...\n",
+            "       |   Package cess_cat is already up-to-date!\n",
+            "       | Downloading package cess_esp to /root/nltk_data...\n",
+            "       |   Package cess_esp is already up-to-date!\n",
+            "       | Downloading package chat80 to /root/nltk_data...\n",
+            "       |   Package chat80 is already up-to-date!\n",
+            "       | Downloading package city_database to /root/nltk_data...\n",
+            "       |   Package city_database is already up-to-date!\n",
+            "       | Downloading package cmudict to /root/nltk_data...\n",
+            "       |   Package cmudict is already up-to-date!\n",
+            "       | Downloading package comparative_sentences to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package comparative_sentences is already up-to-date!\n",
+            "       | Downloading package comtrans to /root/nltk_data...\n",
+            "       |   Package comtrans is already up-to-date!\n",
+            "       | Downloading package conll2000 to /root/nltk_data...\n",
+            "       |   Package conll2000 is already up-to-date!\n",
+            "       | Downloading package conll2002 to /root/nltk_data...\n",
+            "       |   Package conll2002 is already up-to-date!\n",
+            "       | Downloading package conll2007 to /root/nltk_data...\n",
+            "       |   Package conll2007 is already up-to-date!\n",
+            "       | Downloading package crubadan to /root/nltk_data...\n",
+            "       |   Package crubadan is already up-to-date!\n",
+            "       | Downloading package dependency_treebank to /root/nltk_data...\n",
+            "       |   Package dependency_treebank is already up-to-date!\n",
+            "       | Downloading package dolch to /root/nltk_data...\n",
+            "       |   Package dolch is already up-to-date!\n",
+            "       | Downloading package europarl_raw to /root/nltk_data...\n",
+            "       |   Package europarl_raw is already up-to-date!\n",
+            "       | Downloading package floresta to /root/nltk_data...\n",
+            "       |   Package floresta is already up-to-date!\n",
+            "       | Downloading package framenet_v15 to /root/nltk_data...\n",
+            "       |   Package framenet_v15 is already up-to-date!\n",
+            "       | Downloading package framenet_v17 to /root/nltk_data...\n",
+            "       |   Package framenet_v17 is already up-to-date!\n",
+            "       | Downloading package gazetteers to /root/nltk_data...\n",
+            "       |   Package gazetteers is already up-to-date!\n",
+            "       | Downloading package genesis to /root/nltk_data...\n",
+            "       |   Package genesis is already up-to-date!\n",
+            "       | Downloading package gutenberg to /root/nltk_data...\n",
+            "       |   Package gutenberg is already up-to-date!\n",
+            "       | Downloading package ieer to /root/nltk_data...\n",
+            "       |   Package ieer is already up-to-date!\n",
+            "       | Downloading package inaugural to /root/nltk_data...\n",
+            "       |   Package inaugural is already up-to-date!\n",
+            "       | Downloading package indian to /root/nltk_data...\n",
+            "       |   Package indian is already up-to-date!\n",
+            "       | Downloading package jeita to /root/nltk_data...\n",
+            "       |   Package jeita is already up-to-date!\n",
+            "       | Downloading package kimmo to /root/nltk_data...\n",
+            "       |   Package kimmo is already up-to-date!\n",
+            "       | Downloading package knbc to /root/nltk_data...\n",
+            "       |   Package knbc is already up-to-date!\n",
+            "       | Downloading package lin_thesaurus to /root/nltk_data...\n",
+            "       |   Package lin_thesaurus is already up-to-date!\n",
+            "       | Downloading package mac_morpho to /root/nltk_data...\n",
+            "       |   Package mac_morpho is already up-to-date!\n",
+            "       | Downloading package machado to /root/nltk_data...\n",
+            "       |   Package machado is already up-to-date!\n",
+            "       | Downloading package masc_tagged to /root/nltk_data...\n",
+            "       |   Package masc_tagged is already up-to-date!\n",
+            "       | Downloading package moses_sample to /root/nltk_data...\n",
+            "       |   Package moses_sample is already up-to-date!\n",
+            "       | Downloading package movie_reviews to /root/nltk_data...\n",
+            "       |   Package movie_reviews is already up-to-date!\n",
+            "       | Downloading package names to /root/nltk_data...\n",
+            "       |   Package names is already up-to-date!\n",
+            "       | Downloading package nombank.1.0 to /root/nltk_data...\n",
+            "       |   Package nombank.1.0 is already up-to-date!\n",
+            "       | Downloading package nps_chat to /root/nltk_data...\n",
+            "       |   Package nps_chat is already up-to-date!\n",
+            "       | Downloading package omw to /root/nltk_data...\n",
+            "       |   Package omw is already up-to-date!\n",
+            "       | Downloading package opinion_lexicon to /root/nltk_data...\n",
+            "       |   Package opinion_lexicon is already up-to-date!\n",
+            "       | Downloading package paradigms to /root/nltk_data...\n",
+            "       |   Package paradigms is already up-to-date!\n",
+            "       | Downloading package pil to /root/nltk_data...\n",
+            "       |   Package pil is already up-to-date!\n",
+            "       | Downloading package pl196x to /root/nltk_data...\n",
+            "       |   Package pl196x is already up-to-date!\n",
+            "       | Downloading package ppattach to /root/nltk_data...\n",
+            "       |   Package ppattach is already up-to-date!\n",
+            "       | Downloading package problem_reports to /root/nltk_data...\n",
+            "       |   Package problem_reports is already up-to-date!\n",
+            "       | Downloading package propbank to /root/nltk_data...\n",
+            "       |   Package propbank is already up-to-date!\n",
+            "       | Downloading package ptb to /root/nltk_data...\n",
+            "       |   Package ptb is already up-to-date!\n",
+            "       | Downloading package product_reviews_1 to /root/nltk_data...\n",
+            "       |   Package product_reviews_1 is already up-to-date!\n",
+            "       | Downloading package product_reviews_2 to /root/nltk_data...\n",
+            "       |   Package product_reviews_2 is already up-to-date!\n",
+            "       | Downloading package pros_cons to /root/nltk_data...\n",
+            "       |   Package pros_cons is already up-to-date!\n",
+            "       | Downloading package qc to /root/nltk_data...\n",
+            "       |   Package qc is already up-to-date!\n",
+            "       | Downloading package reuters to /root/nltk_data...\n",
+            "       |   Package reuters is already up-to-date!\n",
+            "       | Downloading package rte to /root/nltk_data...\n",
+            "       |   Package rte is already up-to-date!\n",
+            "       | Downloading package semcor to /root/nltk_data...\n",
+            "       |   Package semcor is already up-to-date!\n",
+            "       | Downloading package senseval to /root/nltk_data...\n",
+            "       |   Package senseval is already up-to-date!\n",
+            "       | Downloading package sentiwordnet to /root/nltk_data...\n",
+            "       |   Package sentiwordnet is already up-to-date!\n",
+            "       | Downloading package sentence_polarity to /root/nltk_data...\n",
+            "       |   Package sentence_polarity is already up-to-date!\n",
+            "       | Downloading package shakespeare to /root/nltk_data...\n",
+            "       |   Package shakespeare is already up-to-date!\n",
+            "       | Downloading package sinica_treebank to /root/nltk_data...\n",
+            "       |   Package sinica_treebank is already up-to-date!\n",
+            "       | Downloading package smultron to /root/nltk_data...\n",
+            "       |   Package smultron is already up-to-date!\n",
+            "       | Downloading package state_union to /root/nltk_data...\n",
+            "       |   Package state_union is already up-to-date!\n",
+            "       | Downloading package stopwords to /root/nltk_data...\n",
+            "       |   Package stopwords is already up-to-date!\n",
+            "       | Downloading package subjectivity to /root/nltk_data...\n",
+            "       |   Package subjectivity is already up-to-date!\n",
+            "       | Downloading package swadesh to /root/nltk_data...\n",
+            "       |   Package swadesh is already up-to-date!\n",
+            "       | Downloading package switchboard to /root/nltk_data...\n",
+            "       |   Package switchboard is already up-to-date!\n",
+            "       | Downloading package timit to /root/nltk_data...\n",
+            "       |   Package timit is already up-to-date!\n",
+            "       | Downloading package toolbox to /root/nltk_data...\n",
+            "       |   Package toolbox is already up-to-date!\n",
+            "       | Downloading package treebank to /root/nltk_data...\n",
+            "       |   Package treebank is already up-to-date!\n",
+            "       | Downloading package twitter_samples to /root/nltk_data...\n",
+            "       |   Package twitter_samples is already up-to-date!\n",
+            "       | Downloading package udhr to /root/nltk_data...\n",
+            "       |   Package udhr is already up-to-date!\n",
+            "       | Downloading package udhr2 to /root/nltk_data...\n",
+            "       |   Package udhr2 is already up-to-date!\n",
+            "       | Downloading package unicode_samples to /root/nltk_data...\n",
+            "       |   Package unicode_samples is already up-to-date!\n",
+            "       | Downloading package universal_treebanks_v20 to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package universal_treebanks_v20 is already up-to-date!\n",
+            "       | Downloading package verbnet to /root/nltk_data...\n",
+            "       |   Package verbnet is already up-to-date!\n",
+            "       | Downloading package verbnet3 to /root/nltk_data...\n",
+            "       |   Package verbnet3 is already up-to-date!\n",
+            "       | Downloading package webtext to /root/nltk_data...\n",
+            "       |   Package webtext is already up-to-date!\n",
+            "       | Downloading package wordnet to /root/nltk_data...\n",
+            "       |   Package wordnet is already up-to-date!\n",
+            "       | Downloading package wordnet_ic to /root/nltk_data...\n",
+            "       |   Package wordnet_ic is already up-to-date!\n",
+            "       | Downloading package words to /root/nltk_data...\n",
+            "       |   Package words is already up-to-date!\n",
+            "       | Downloading package ycoe to /root/nltk_data...\n",
+            "       |   Package ycoe is already up-to-date!\n",
+            "       | Downloading package rslp to /root/nltk_data...\n",
+            "       |   Package rslp is already up-to-date!\n",
+            "       | Downloading package maxent_treebank_pos_tagger to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package maxent_treebank_pos_tagger is already up-to-date!\n",
+            "       | Downloading package universal_tagset to /root/nltk_data...\n",
+            "       |   Package universal_tagset is already up-to-date!\n",
+            "       | Downloading package maxent_ne_chunker to /root/nltk_data...\n",
+            "       |   Package maxent_ne_chunker is already up-to-date!\n",
+            "       | Downloading package punkt to /root/nltk_data...\n",
+            "       |   Package punkt is already up-to-date!\n",
+            "       | Downloading package book_grammars to /root/nltk_data...\n",
+            "       |   Package book_grammars is already up-to-date!\n",
+            "       | Downloading package sample_grammars to /root/nltk_data...\n",
+            "       |   Package sample_grammars is already up-to-date!\n",
+            "       | Downloading package spanish_grammars to /root/nltk_data...\n",
+            "       |   Package spanish_grammars is already up-to-date!\n",
+            "       | Downloading package basque_grammars to /root/nltk_data...\n",
+            "       |   Package basque_grammars is already up-to-date!\n",
+            "       | Downloading package large_grammars to /root/nltk_data...\n",
+            "       |   Package large_grammars is already up-to-date!\n",
+            "       | Downloading package tagsets to /root/nltk_data...\n",
+            "       |   Package tagsets is already up-to-date!\n",
+            "       | Downloading package snowball_data to /root/nltk_data...\n",
+            "       |   Package snowball_data is already up-to-date!\n",
+            "       | Downloading package bllip_wsj_no_aux to /root/nltk_data...\n",
+            "       |   Package bllip_wsj_no_aux is already up-to-date!\n",
+            "       | Downloading package word2vec_sample to /root/nltk_data...\n",
+            "       |   Package word2vec_sample is already up-to-date!\n",
+            "       | Downloading package panlex_swadesh to /root/nltk_data...\n",
+            "       |   Package panlex_swadesh is already up-to-date!\n",
+            "       | Downloading package mte_teip5 to /root/nltk_data...\n",
+            "       |   Package mte_teip5 is already up-to-date!\n",
+            "       | Downloading package averaged_perceptron_tagger to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package averaged_perceptron_tagger is already up-to-date!\n",
+            "       | Downloading package averaged_perceptron_tagger_ru to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package averaged_perceptron_tagger_ru is already up-to-\n",
+            "       |       date!\n",
+            "       | Downloading package perluniprops to /root/nltk_data...\n",
+            "       |   Package perluniprops is already up-to-date!\n",
+            "       | Downloading package nonbreaking_prefixes to\n",
+            "       |     /root/nltk_data...\n",
+            "       |   Package nonbreaking_prefixes is already up-to-date!\n",
+            "       | Downloading package vader_lexicon to /root/nltk_data...\n",
+            "       |   Package vader_lexicon is already up-to-date!\n",
+            "       | Downloading package porter_test to /root/nltk_data...\n",
+            "       |   Package porter_test is already up-to-date!\n",
+            "       | Downloading package wmt15_eval to /root/nltk_data...\n",
+            "       |   Package wmt15_eval is already up-to-date!\n",
+            "       | Downloading package mwa_ppdb to /root/nltk_data...\n",
+            "       |   Package mwa_ppdb is already up-to-date!\n",
+            "       | \n",
+            "     Done downloading collection all\n"
+          ],
+          "name": "stderr"
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "\n",
+            "---------------------------------------------------------------------------\n",
+            "    d) Download   l) List    u) Update   c) Config   h) Help   q) Quit\n",
+            "---------------------------------------------------------------------------\n",
+            "Downloader> q\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aPzuzhVzszxD"
+      },
+      "source": [
+        "***********"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "K-TLsYyyszxE"
+      },
+      "source": [
+        "input_text = \"I bought this cookware set because I finally graduated college, got married and decided that I was finished using the cheapest. I decided on this brand because quite a number of professional chefs I know also have these pans in their home kitchens. I was originally very impressed with the set and loved the design and heaviness. After many uses I have now discovered several items worth mentioning to potential buyers. First, on the positive side, I must say that the heat distribution is great and this cookware cooks very evenly. And, as I mentioned before, stylistically they are quite lovely to look at. They add a touch of class to any kitchen. A problem I have discovered and have been greatly disappointed with is the heat retention and conduction of the handles. I have been burned several times now by grabbing on to the handles which appear to have been designed to avoid just such accidents. I don't know why this occurs but it is a hazard and I have to constantly remember to grab a pot holder before grabbing the handle of the pan or pot. I do A LOT of cooking and this is a huge problem for me.\""
+      ],
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "JqCBa29aszxE"
+      },
+      "source": [
+        "__1. Utilizando el segmentador de frases de NLTK, muestra por pantalla el número de frases que contiene el texto de entrada.__"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cvNowvMXszxF"
+      },
+      "source": [
+        "import nltk"
+      ],
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lNgaz4FdszxF",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "f2ffb825-7717-4dd5-c8c7-8162a1363155"
+      },
+      "source": [
+        "## Generamos nuestro array con las frases\n",
+        "phrases = nltk.sent_tokenize(input_text)\n",
+        "print(phrases)"
+      ],
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "['I bought this cookware set because I finally graduated college, got married and decided that I was finished using the cheapest.', 'I decided on this brand because quite a number of professional chefs I know also have these pans in their home kitchens.', 'I was originally very impressed with the set and loved the design and heaviness.', 'After many uses I have now discovered several items worth mentioning to potential buyers.', 'First, on the positive side, I must say that the heat distribution is great and this cookware cooks very evenly.', 'And, as I mentioned before, stylistically they are quite lovely to look at.', 'They add a touch of class to any kitchen.', 'A problem I have discovered and have been greatly disappointed with is the heat retention and conduction of the handles.', 'I have been burned several times now by grabbing on to the handles which appear to have been designed to avoid just such accidents.', \"I don't know why this occurs but it is a hazard and I have to constantly remember to grab a pot holder before grabbing the handle of the pan or pot.\", 'I do A LOT of cooking and this is a huge problem for me.']\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "nTfJIFQAI-nq",
+        "outputId": "b8eac997-e80f-47d4-d3c7-b484b10d4c14"
+      },
+      "source": [
+        "print(\"El texto de entrada está compuesto de \" + str(len(phrases)) + \" frases.\")"
+      ],
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "El texto de entrada está compuesto de 11 frases.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7tXVo1sqszxG"
+      },
+      "source": [
+        "   Salida esperada: \n",
+        "       _El texto de entrada está compuesto de 11 frases._"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "vz1z8SvVszxG"
+      },
+      "source": [
+        "** 2. Muestra por pantalla la segunda frase del texto de entrada **"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ytnzjeB6szxG",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "51eaf828-48b5-4582-c3bb-234af372597d"
+      },
+      "source": [
+        "print(phrases[1])"
+      ],
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "I decided on this brand because quite a number of professional chefs I know also have these pans in their home kitchens.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "RMywtfcqszxH"
+      },
+      "source": [
+        "Salida esperada: _I decided on this brand because quite a number of professional chefs I know also have these pans in their home kitchens._"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Njj_mxY6szxH"
+      },
+      "source": [
+        "** 3. Utilizando el tokenizador de NLTK, muestra por pantalla cada una de las frases contenidas en el texto de entrada junto con el número de tokens que hay en cada frase.**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uVHim5r7szxI",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "522672aa-29f4-4bc7-ca0c-dd03fd010f4c"
+      },
+      "source": [
+        "## Iteramos sobre el array de frases para mostrar las palabras y su conteo\n",
+        "for phrase in phrases:\n",
+        "  word = nltk.word_tokenize(phrase)\n",
+        "  print(\"Frase: \"  + str(word) + \" con una longitud de \" + str(len(word)) + \" tokens.\")\n"
+      ],
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Frase: ['I', 'bought', 'this', 'cookware', 'set', 'because', 'I', 'finally', 'graduated', 'college', ',', 'got', 'married', 'and', 'decided', 'that', 'I', 'was', 'finished', 'using', 'the', 'cheapest', '.'] con una longitud de 23 tokens.\n",
+            "Frase: ['I', 'decided', 'on', 'this', 'brand', 'because', 'quite', 'a', 'number', 'of', 'professional', 'chefs', 'I', 'know', 'also', 'have', 'these', 'pans', 'in', 'their', 'home', 'kitchens', '.'] con una longitud de 23 tokens.\n",
+            "Frase: ['I', 'was', 'originally', 'very', 'impressed', 'with', 'the', 'set', 'and', 'loved', 'the', 'design', 'and', 'heaviness', '.'] con una longitud de 15 tokens.\n",
+            "Frase: ['After', 'many', 'uses', 'I', 'have', 'now', 'discovered', 'several', 'items', 'worth', 'mentioning', 'to', 'potential', 'buyers', '.'] con una longitud de 15 tokens.\n",
+            "Frase: ['First', ',', 'on', 'the', 'positive', 'side', ',', 'I', 'must', 'say', 'that', 'the', 'heat', 'distribution', 'is', 'great', 'and', 'this', 'cookware', 'cooks', 'very', 'evenly', '.'] con una longitud de 23 tokens.\n",
+            "Frase: ['And', ',', 'as', 'I', 'mentioned', 'before', ',', 'stylistically', 'they', 'are', 'quite', 'lovely', 'to', 'look', 'at', '.'] con una longitud de 16 tokens.\n",
+            "Frase: ['They', 'add', 'a', 'touch', 'of', 'class', 'to', 'any', 'kitchen', '.'] con una longitud de 10 tokens.\n",
+            "Frase: ['A', 'problem', 'I', 'have', 'discovered', 'and', 'have', 'been', 'greatly', 'disappointed', 'with', 'is', 'the', 'heat', 'retention', 'and', 'conduction', 'of', 'the', 'handles', '.'] con una longitud de 21 tokens.\n",
+            "Frase: ['I', 'have', 'been', 'burned', 'several', 'times', 'now', 'by', 'grabbing', 'on', 'to', 'the', 'handles', 'which', 'appear', 'to', 'have', 'been', 'designed', 'to', 'avoid', 'just', 'such', 'accidents', '.'] con una longitud de 25 tokens.\n",
+            "Frase: ['I', 'do', \"n't\", 'know', 'why', 'this', 'occurs', 'but', 'it', 'is', 'a', 'hazard', 'and', 'I', 'have', 'to', 'constantly', 'remember', 'to', 'grab', 'a', 'pot', 'holder', 'before', 'grabbing', 'the', 'handle', 'of', 'the', 'pan', 'or', 'pot', '.'] con una longitud de 33 tokens.\n",
+            "Frase: ['I', 'do', 'A', 'LOT', 'of', 'cooking', 'and', 'this', 'is', 'a', 'huge', 'problem', 'for', 'me', '.'] con una longitud de 15 tokens.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "SQuqQrSsszxI"
+      },
+      "source": [
+        "Salida esperada:"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "S0-Xaz74szxJ"
+      },
+      "source": [
+        "_Frase: ['I', 'bought', 'this', 'cookware', 'set', 'because', 'I', 'finally', 'graduated', 'college', ',', 'got', 'married', 'and', 'decided', 'that', 'I', 'was', 'finished', 'using', 'the', 'cheapest', '.'] con una longitud de 23 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'decided', 'on', 'this', 'brand', 'because', 'quite', 'a', 'number', 'of', 'professional', 'chefs', 'I', 'know', 'also', 'have', 'these', 'pans', 'in', 'their', 'home', 'kitchens', '.'] con una longitud de 23 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'was', 'originally', 'very', 'impressed', 'with', 'the', 'set', 'and', 'loved', 'the', 'design', 'and', 'heaviness', '.'] con una longitud de 15 tokens._\n",
+        "\n",
+        "_Frase: ['After', 'many', 'uses', 'I', 'have', 'now', 'discovered', 'several', 'items', 'worth', 'mentioning', 'to', 'potential', 'buyers', '.'] con una longitud de 15 tokens._\n",
+        "\n",
+        "_Frase: ['First', ',', 'on', 'the', 'positive', 'side', ',', 'I', 'must', 'say', 'that', 'the', 'heat', 'distribution', 'is', 'great', 'and', 'this', 'cookware', 'cooks', 'very', 'evenly', '.'] con una longitud de 23 tokens._\n",
+        "\n",
+        "_Frase: ['And', ',', 'as', 'I', 'mentioned', 'before', ',', 'stylistically', 'they', 'are', 'quite', 'lovely', 'to', 'look', 'at', '.'] con una longitud de 16 tokens._\n",
+        "\n",
+        "_Frase: ['They', 'add', 'a', 'touch', 'of', 'class', 'to', 'any', 'kitchen', '.'] con una longitud de 10 tokens._\n",
+        "\n",
+        "_Frase: ['A', 'problem', 'I', 'have', 'discovered', 'and', 'have', 'been', 'greatly', 'disappointed', 'with', 'is', 'the', 'heat', 'retention', 'and', 'conduction', 'of', 'the', 'handles', '.'] con una longitud de 21 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'have', 'been', 'burned', 'several', 'times', 'now', 'by', 'grabbing', 'on', 'to', 'the', 'handles', 'which', 'appear', 'to', 'have', 'been', 'designed', 'to', 'avoid', 'just', 'such', 'accidents', '.'] con una longitud de 25 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'do', \"n't\", 'know', 'why', 'this', 'occurs', 'but', 'it', 'is', 'a', 'hazard', 'and', 'I', 'have', 'to', 'constantly', 'remember', 'to', 'grab', 'a', 'pot', 'holder', 'before', 'grabbing', 'the', 'handle', 'of', 'the', 'pan', 'or', 'pot', '.'] con una longitud de 33 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'do', 'A', 'LOT', 'of', 'cooking', 'and', 'this', 'is', 'a', 'huge', 'problem', 'for', 'me', '.'] con una longitud de 15 tokens._"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Iq1fhfVTszxK"
+      },
+      "source": [
+        "**4. Utilizando la lista de stop words en inglés de NLTK, elimina todas aquellas stop words contenidas en las frases del texto de entrada. A continuación, muestra por pantalla cómo quedarían ahora cada una de las frases junto con el número de tokens que hay en cada una de ellas. En la siguiente página web encontrarás más información sobre cómo hacerlo:** https://www.geeksforgeeks.org/removing-stop-words-nltk-python/\n",
+        "\n",
+        "Nota: La lista de stop words podría variar ligeramente según la versión de NLTK instalada y por tanto, el resultado obtenido en este apartado."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "foFU6VESszxK"
+      },
+      "source": [
+        "## Importamos  los paquetes necesarios\n",
+        "from nltk.corpus import stopwords \n",
+        "from nltk.tokenize import word_tokenize \n",
+        "\n",
+        "## Definimos las stop_words\n",
+        "stop_words = set(stopwords.words('english')) \n"
+      ],
+      "execution_count": 9,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "CQJPFINWM4dv",
+        "outputId": "c9942587-499f-4b63-ca60-8117e588f33d"
+      },
+      "source": [
+        "## Iteramos sobre las frases anteriores, tokenizando las palabras, y quitando de éstas las stop words\n",
+        "for phrase in phrases:\n",
+        "  words = nltk.word_tokenize(phrase)\n",
+        "  filtered_words = []                                                       ## Inicializamos el array de resultados\n",
+        "  \n",
+        "  for word in words:                                                      ## Para cada palabra en la frase, comprobamos si es una stop_word\n",
+        "    if word not in stop_words:\n",
+        "      filtered_words.append(word)                                        ## Si no lo es, se añade al array de resultados\n",
+        "  \n",
+        "  print(\"Frase: \"  + str(filtered_words) + \" con una longitud de \" + str(len(filtered_words)) + \" tokens.\")\n"
+      ],
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Frase: ['I', 'bought', 'cookware', 'set', 'I', 'finally', 'graduated', 'college', ',', 'got', 'married', 'decided', 'I', 'finished', 'using', 'cheapest', '.'] con una longitud de 17 tokens.\n",
+            "Frase: ['I', 'decided', 'brand', 'quite', 'number', 'professional', 'chefs', 'I', 'know', 'also', 'pans', 'home', 'kitchens', '.'] con una longitud de 14 tokens.\n",
+            "Frase: ['I', 'originally', 'impressed', 'set', 'loved', 'design', 'heaviness', '.'] con una longitud de 8 tokens.\n",
+            "Frase: ['After', 'many', 'uses', 'I', 'discovered', 'several', 'items', 'worth', 'mentioning', 'potential', 'buyers', '.'] con una longitud de 12 tokens.\n",
+            "Frase: ['First', ',', 'positive', 'side', ',', 'I', 'must', 'say', 'heat', 'distribution', 'great', 'cookware', 'cooks', 'evenly', '.'] con una longitud de 15 tokens.\n",
+            "Frase: ['And', ',', 'I', 'mentioned', ',', 'stylistically', 'quite', 'lovely', 'look', '.'] con una longitud de 10 tokens.\n",
+            "Frase: ['They', 'add', 'touch', 'class', 'kitchen', '.'] con una longitud de 6 tokens.\n",
+            "Frase: ['A', 'problem', 'I', 'discovered', 'greatly', 'disappointed', 'heat', 'retention', 'conduction', 'handles', '.'] con una longitud de 11 tokens.\n",
+            "Frase: ['I', 'burned', 'several', 'times', 'grabbing', 'handles', 'appear', 'designed', 'avoid', 'accidents', '.'] con una longitud de 11 tokens.\n",
+            "Frase: ['I', \"n't\", 'know', 'occurs', 'hazard', 'I', 'constantly', 'remember', 'grab', 'pot', 'holder', 'grabbing', 'handle', 'pan', 'pot', '.'] con una longitud de 16 tokens.\n",
+            "Frase: ['I', 'A', 'LOT', 'cooking', 'huge', 'problem', '.'] con una longitud de 7 tokens.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7gw56Z57szxL"
+      },
+      "source": [
+        "Salida esperada:"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "s87mjEYmszxL"
+      },
+      "source": [
+        "_Frase: ['I', 'bought', 'cookware', 'set', 'I', 'finally', 'graduated', 'college', ',', 'got', 'married', 'decided', 'I', 'finished', 'using', 'cheapest', '.'] con una longitud de 17 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'decided', 'brand', 'quite', 'number', 'professional', 'chefs', 'I', 'know', 'also', 'pans', 'home', 'kitchens', '.'] con una longitud de 14 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'originally', 'impressed', 'set', 'loved', 'design', 'heaviness', '.'] con una longitud de 8 tokens._\n",
+        "\n",
+        "_Frase: ['After', 'many', 'uses', 'I', 'discovered', 'several', 'items', 'worth', 'mentioning', 'potential', 'buyers', '.'] con una longitud de 12 tokens._\n",
+        "\n",
+        "_Frase: ['First', ',', 'positive', 'side', ',', 'I', 'must', 'say', 'heat', 'distribution', 'great', 'cookware', 'cooks', 'evenly', '.'] con una longitud de 15 tokens._\n",
+        "\n",
+        "_Frase: ['And', ',', 'I', 'mentioned', ',', 'stylistically', 'quite', 'lovely', 'look', '.'] con una longitud de 10 tokens._\n",
+        "\n",
+        "_Frase: ['They', 'add', 'touch', 'class', 'kitchen', '.'] con una longitud de 6 tokens._\n",
+        "\n",
+        "_Frase: ['A', 'problem', 'I', 'discovered', 'greatly', 'disappointed', 'heat', 'retention', 'conduction', 'handles', '.'] con una longitud de 11 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'burned', 'several', 'times', 'grabbing', 'handles', 'appear', 'designed', 'avoid', 'accidents', '.'] con una longitud de 11 tokens._\n",
+        "\n",
+        "_Frase: ['I', \"n't\", 'know', 'occurs', 'hazard', 'I', 'constantly', 'remember', 'grab', 'pot', 'holder', 'grabbing', 'handle', 'pan', 'pot', '.'] con una longitud de 16 tokens._\n",
+        "\n",
+        "_Frase: ['I', 'A', 'LOT', 'cooking', 'huge', 'problem', '.'] con una longitud de 7 tokens._"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "o0jcSf6qszxM"
+      },
+      "source": [
+        "** 5. Utilizando el etiquetador gramatical de NLTK, muestra por pantalla el número de nombres (etiquetas \"NN\" y \"NNS\"), nombres propios (etiquetas \"NNP\" y \"NNPS\") y verbos (etiquetas \"VB\", \"VBD\", \"VBG\", \"VBN\", \"VBP\"y \"VBZ\") que aparecen en el texto de entrada original (sin eliminar las stop words).**\n",
+        "\n",
+        "Nota: La salida esperada también podría variar ligeramente."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "scrolled": true,
+        "id": "PBmFwfU9szxN",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "508a0dc9-21c2-40c2-cf7e-a0cf6ceb3904"
+      },
+      "source": [
+        "## Aplicamos el tokenizado sobre todas las frases del texto, directamente\n",
+        "words = nltk.word_tokenize(input_text)\n",
+        "print(words)"
+      ],
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "['I', 'bought', 'this', 'cookware', 'set', 'because', 'I', 'finally', 'graduated', 'college', ',', 'got', 'married', 'and', 'decided', 'that', 'I', 'was', 'finished', 'using', 'the', 'cheapest', '.', 'I', 'decided', 'on', 'this', 'brand', 'because', 'quite', 'a', 'number', 'of', 'professional', 'chefs', 'I', 'know', 'also', 'have', 'these', 'pans', 'in', 'their', 'home', 'kitchens', '.', 'I', 'was', 'originally', 'very', 'impressed', 'with', 'the', 'set', 'and', 'loved', 'the', 'design', 'and', 'heaviness', '.', 'After', 'many', 'uses', 'I', 'have', 'now', 'discovered', 'several', 'items', 'worth', 'mentioning', 'to', 'potential', 'buyers', '.', 'First', ',', 'on', 'the', 'positive', 'side', ',', 'I', 'must', 'say', 'that', 'the', 'heat', 'distribution', 'is', 'great', 'and', 'this', 'cookware', 'cooks', 'very', 'evenly', '.', 'And', ',', 'as', 'I', 'mentioned', 'before', ',', 'stylistically', 'they', 'are', 'quite', 'lovely', 'to', 'look', 'at', '.', 'They', 'add', 'a', 'touch', 'of', 'class', 'to', 'any', 'kitchen', '.', 'A', 'problem', 'I', 'have', 'discovered', 'and', 'have', 'been', 'greatly', 'disappointed', 'with', 'is', 'the', 'heat', 'retention', 'and', 'conduction', 'of', 'the', 'handles', '.', 'I', 'have', 'been', 'burned', 'several', 'times', 'now', 'by', 'grabbing', 'on', 'to', 'the', 'handles', 'which', 'appear', 'to', 'have', 'been', 'designed', 'to', 'avoid', 'just', 'such', 'accidents', '.', 'I', 'do', \"n't\", 'know', 'why', 'this', 'occurs', 'but', 'it', 'is', 'a', 'hazard', 'and', 'I', 'have', 'to', 'constantly', 'remember', 'to', 'grab', 'a', 'pot', 'holder', 'before', 'grabbing', 'the', 'handle', 'of', 'the', 'pan', 'or', 'pot', '.', 'I', 'do', 'A', 'LOT', 'of', 'cooking', 'and', 'this', 'is', 'a', 'huge', 'problem', 'for', 'me', '.']\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ZACAncDaQ0ey",
+        "outputId": "8b41b96d-faa4-46aa-f626-d79d26e0ea18"
+      },
+      "source": [
+        "## Sacamos los tags para cada palabra\n",
+        "tags = nltk.pos_tag(words)\n",
+        "print(tags)"
+      ],
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "[('I', 'PRP'), ('bought', 'VBD'), ('this', 'DT'), ('cookware', 'NN'), ('set', 'VBN'), ('because', 'IN'), ('I', 'PRP'), ('finally', 'RB'), ('graduated', 'VBD'), ('college', 'NN'), (',', ','), ('got', 'VBD'), ('married', 'JJ'), ('and', 'CC'), ('decided', 'VBD'), ('that', 'IN'), ('I', 'PRP'), ('was', 'VBD'), ('finished', 'VBN'), ('using', 'VBG'), ('the', 'DT'), ('cheapest', 'JJS'), ('.', '.'), ('I', 'PRP'), ('decided', 'VBD'), ('on', 'IN'), ('this', 'DT'), ('brand', 'NN'), ('because', 'IN'), ('quite', 'PDT'), ('a', 'DT'), ('number', 'NN'), ('of', 'IN'), ('professional', 'JJ'), ('chefs', 'NN'), ('I', 'PRP'), ('know', 'VBP'), ('also', 'RB'), ('have', 'VBP'), ('these', 'DT'), ('pans', 'NNS'), ('in', 'IN'), ('their', 'PRP$'), ('home', 'NN'), ('kitchens', 'NNS'), ('.', '.'), ('I', 'PRP'), ('was', 'VBD'), ('originally', 'RB'), ('very', 'RB'), ('impressed', 'JJ'), ('with', 'IN'), ('the', 'DT'), ('set', 'NN'), ('and', 'CC'), ('loved', 'VBD'), ('the', 'DT'), ('design', 'NN'), ('and', 'CC'), ('heaviness', 'NN'), ('.', '.'), ('After', 'IN'), ('many', 'JJ'), ('uses', 'NNS'), ('I', 'PRP'), ('have', 'VBP'), ('now', 'RB'), ('discovered', 'VBN'), ('several', 'JJ'), ('items', 'NNS'), ('worth', 'JJ'), ('mentioning', 'VBG'), ('to', 'TO'), ('potential', 'JJ'), ('buyers', 'NNS'), ('.', '.'), ('First', 'NNP'), (',', ','), ('on', 'IN'), ('the', 'DT'), ('positive', 'JJ'), ('side', 'NN'), (',', ','), ('I', 'PRP'), ('must', 'MD'), ('say', 'VB'), ('that', 'IN'), ('the', 'DT'), ('heat', 'NN'), ('distribution', 'NN'), ('is', 'VBZ'), ('great', 'JJ'), ('and', 'CC'), ('this', 'DT'), ('cookware', 'NN'), ('cooks', 'VBZ'), ('very', 'RB'), ('evenly', 'RB'), ('.', '.'), ('And', 'CC'), (',', ','), ('as', 'IN'), ('I', 'PRP'), ('mentioned', 'VBD'), ('before', 'IN'), (',', ','), ('stylistically', 'RB'), ('they', 'PRP'), ('are', 'VBP'), ('quite', 'RB'), ('lovely', 'RB'), ('to', 'TO'), ('look', 'VB'), ('at', 'IN'), ('.', '.'), ('They', 'PRP'), ('add', 'VBP'), ('a', 'DT'), ('touch', 'NN'), ('of', 'IN'), ('class', 'NN'), ('to', 'TO'), ('any', 'DT'), ('kitchen', 'NN'), ('.', '.'), ('A', 'DT'), ('problem', 'NN'), ('I', 'PRP'), ('have', 'VBP'), ('discovered', 'VBN'), ('and', 'CC'), ('have', 'VBP'), ('been', 'VBN'), ('greatly', 'RB'), ('disappointed', 'JJ'), ('with', 'IN'), ('is', 'VBZ'), ('the', 'DT'), ('heat', 'NN'), ('retention', 'NN'), ('and', 'CC'), ('conduction', 'NN'), ('of', 'IN'), ('the', 'DT'), ('handles', 'NNS'), ('.', '.'), ('I', 'PRP'), ('have', 'VBP'), ('been', 'VBN'), ('burned', 'VBN'), ('several', 'JJ'), ('times', 'NNS'), ('now', 'RB'), ('by', 'IN'), ('grabbing', 'VBG'), ('on', 'IN'), ('to', 'TO'), ('the', 'DT'), ('handles', 'NNS'), ('which', 'WDT'), ('appear', 'VBP'), ('to', 'TO'), ('have', 'VB'), ('been', 'VBN'), ('designed', 'VBN'), ('to', 'TO'), ('avoid', 'VB'), ('just', 'RB'), ('such', 'JJ'), ('accidents', 'NNS'), ('.', '.'), ('I', 'PRP'), ('do', 'VBP'), (\"n't\", 'RB'), ('know', 'VB'), ('why', 'WRB'), ('this', 'DT'), ('occurs', 'VBZ'), ('but', 'CC'), ('it', 'PRP'), ('is', 'VBZ'), ('a', 'DT'), ('hazard', 'NN'), ('and', 'CC'), ('I', 'PRP'), ('have', 'VBP'), ('to', 'TO'), ('constantly', 'VB'), ('remember', 'VB'), ('to', 'TO'), ('grab', 'VB'), ('a', 'DT'), ('pot', 'NN'), ('holder', 'NN'), ('before', 'IN'), ('grabbing', 'VBG'), ('the', 'DT'), ('handle', 'NN'), ('of', 'IN'), ('the', 'DT'), ('pan', 'NN'), ('or', 'CC'), ('pot', 'NN'), ('.', '.'), ('I', 'PRP'), ('do', 'VBP'), ('A', 'DT'), ('LOT', 'NNP'), ('of', 'IN'), ('cooking', 'VBG'), ('and', 'CC'), ('this', 'DT'), ('is', 'VBZ'), ('a', 'DT'), ('huge', 'JJ'), ('problem', 'NN'), ('for', 'IN'), ('me', 'PRP'), ('.', '.')]\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "bqbtEfqpRFBa",
+        "outputId": "f6a32f4f-07e8-40be-dd04-a6f4e73aad1b"
+      },
+      "source": [
+        "## Iteramos sobre el listado de tags\n",
+        "noun, name, verb = 0,0,0\n",
+        "for tag in tags:\n",
+        "  if tag[1] in ['NN','NNS']:            \n",
+        "    noun += 1\n",
+        "  elif tag[1] in ['NNP','NNPS']:\n",
+        "    name += 1\n",
+        "  elif tag[1] in ['VB','VBD','VBG','VBN','VBP','VBZ']:\n",
+        "    verb += 1\n",
+        "  \n",
+        "print (\"En la colección aparecen \" + str(noun) + \" nombres, \" + str(name) +\" nombres propios y \" + str(verb) + \" verbos.\")"
+      ],
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "En la colección aparecen 36 nombres, 2 nombres propios y 49 verbos.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "-2ZHxWtwszxN"
+      },
+      "source": [
+        "Salida esperada: _En la colección aparecen 36 nombres, 1 nombres propios y 49 verbos._"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "tuZWoBLpszxO"
+      },
+      "source": [
+        "**6. Utilizando el reconocedor de entidades nombradas de NLTK sobre la última frase del texto de entrada, explica cuál es la diferencia entre llamar a la función con el parámetro \"binary\" puesto a \"true\" y no incluirlo. **"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "scrolled": false,
+        "id": "k7-QI_g1szxO",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "4d08036a-5ec8-4e3a-d398-6d2690c45e93"
+      },
+      "source": [
+        "## Generamos los tags para la última frase del texto\n",
+        "words = nltk.word_tokenize(phrases[-1])\n",
+        "tags = nltk.pos_tag(words)\n",
+        "\n",
+        "## Vemos los resultados con True y sin él\n",
+        "\n",
+        "\n",
+        "entities_true = nltk.chunk.ne_chunk(tags, binary=True)\n",
+        "print('Análisis Semántico con parámetro a True: ' + str(entities_true))\n",
+        "\n",
+        "entities = nltk.chunk.ne_chunk(tags)\n",
+        "print('Análisis Semántico sin parámetro: ' + str(entities))\n"
+      ],
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Análisis Semántico con parámetro a True: (S\n",
+            "  I/PRP\n",
+            "  do/VBP\n",
+            "  A/DT\n",
+            "  LOT/NNP\n",
+            "  of/IN\n",
+            "  cooking/VBG\n",
+            "  and/CC\n",
+            "  this/DT\n",
+            "  is/VBZ\n",
+            "  a/DT\n",
+            "  huge/JJ\n",
+            "  problem/NN\n",
+            "  for/IN\n",
+            "  me/PRP\n",
+            "  ./.)\n",
+            "Análisis Semántico sin parámetro: (S\n",
+            "  I/PRP\n",
+            "  do/VBP\n",
+            "  A/DT\n",
+            "  (ORGANIZATION LOT/NNP)\n",
+            "  of/IN\n",
+            "  cooking/VBG\n",
+            "  and/CC\n",
+            "  this/DT\n",
+            "  is/VBZ\n",
+            "  a/DT\n",
+            "  huge/JJ\n",
+            "  problem/NN\n",
+            "  for/IN\n",
+            "  me/PRP\n",
+            "  ./.)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KavI4QcCszxO"
+      },
+      "source": [
+        "Salida esperada:"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "0uy-6PvqszxP"
+      },
+      "source": [
+        "![Captura%20de%20pantalla%202021-01-02%20a%20las%2019.15.15.png](attachment:Captura%20de%20pantalla%202021-01-02%20a%20las%2019.15.15.png)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "MTbw5ktxszxP"
+      },
+      "source": [
+        "Puedes incluir tu comentario sobre el último apartado en esta misma celda: \n",
+        "\n",
+        "\n",
+        "---\n",
+        "\n",
+        "\n",
+        "Con el valor a **True** (`binary=True`), no nos reconoce ninguna entidad.\n",
+        "\n",
+        "\n",
+        "Con el valor por defecto (`binary=False`), sí nos aparece una, \n",
+        "**(ORGANIZATION LOT/NNP)**\n",
+        "\n",
+        "\n",
+        "Consultando [la documentación de NLTK](https://www.nltk.org/book/ch07.html#binary-ne), el parámetro binary define cómo se identifican las entidades. Cuando se marca como True, todas se resuelven como **NE**.\n",
+        "Sin embargo, en nuestro paso parece que no lo está resolviendo correctamente para esta palabra.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KV5cog1OszxP"
+      },
+      "source": [
+        "## ¡Buen trabajo!"
+      ]
+    }
+  ]
+}
